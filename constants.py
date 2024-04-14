@@ -1,11 +1,12 @@
 EXERCISES = ['one octave', 'two octaves', 'triads']
 
-EVENT_VALUES = {'1whole notes': (1, 1),
-          '2half notes': (2, 2),
-          '3quarter notes': (4, 4),
-          '4eigth notes': (8, 8),
-          '5eigth triplets': (12, 8),
-          '6sixteenth': (16, 16)}
+EVENT_VALUES = {
+    '1whole notes': (1, 1),
+    '2half notes': (2, 2),
+    '3quarter notes': (4, 4),
+    '4eigth notes': (8, 8),
+    '5eigth triplets': (12, 8),
+    '6sixteenth': (16, 16)}
 
 TRANSLATIONS = {
     "0": "\\Nf",
@@ -25,7 +26,7 @@ TRANSLATIONS = {
 }
 
 
-HEAD = f"""\\version "2.22.1"
+HEAD = f"""\\version "2.24.1"
 \\language "deutsch"
 \\include "commons.ly"
 
