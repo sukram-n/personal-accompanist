@@ -13,7 +13,7 @@ def place_widgets():
 
     state = st.session_state
 
-    st.write('## Private Accompanist')
+    st.write('## Personal Accompanist')
 
     musickeys = []
     for scale in scales:
