@@ -1,0 +1,2 @@
+streamlit
+lilypond==2.22.1
