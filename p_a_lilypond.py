@@ -3,7 +3,7 @@ import subprocess
 
 from practice_data import constants as cst
 
-from .practice import SPEEDS, Practices
+from p_a_practice import SPEEDS, Practices
 
 TRANSLATIONS = {
     "0": "^\\Nf",

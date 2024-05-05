@@ -3,7 +3,7 @@ import subprocess
 import numpy as np
 
 import streamlit as st
-from .practice import Practices
+from p_a_practice import Practices
 from practice_data import constants as cst
 
 
@@ -118,10 +118,7 @@ class Audio:
         start_index = 4 * dp_per_beat
         sample_size = part = t = 0
         for i_durations, durations in enumerate(p_a.lilypond.durations[1:]):
-            print(i_durations, durations)
-            print(chords[(i_durations // 2) % len(chords)])
             for i_duration, duration in enumerate(durations):
-                print("  ", i_duration, duration)
                 if duration != previous_duration:
                     previous_duration = duration
                     sample_size = abs(duration) * dp_per_beat // 12

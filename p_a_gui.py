@@ -4,11 +4,11 @@ import streamlit as st
 
 from practice_data import practice_data, constants as cst
 
-from .practice import Practices, EXERCISES, SPEEDS
-from .audio import Audio
-from .lilypond import Lilypond
+from p_a_practice import Practices, EXERCISES, SPEEDS
+from p_a_audio import Audio
+from p_a_lilypond import Lilypond
 
-import personal_accompanist
+import p_a
 
 
 def format_func(s: str) -> str:
@@ -55,7 +55,7 @@ class GUI:
 
     def show_gui(self):
 
-        p_a: personal_accompanist.PersonalAccompanist = st.session_state.p_a
+        p_a: p_a.PersonalAccompanist = st.session_state.p_a
 
         st.write('## Personal Accompanist')
 

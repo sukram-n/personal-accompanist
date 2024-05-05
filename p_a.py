@@ -1,9 +1,9 @@
 import streamlit as st
 
-from .practice import Practices
-from .lilypond import Lilypond
-from .audio import Audio
-from .gui import GUI
+from p_a_practice import Practices
+from p_a_lilypond import Lilypond
+from p_a_audio import Audio
+from p_a_gui import GUI
 
 from practice_data import constants as cst
 
