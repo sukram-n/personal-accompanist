@@ -1,40 +1,125 @@
-from importlib import reload
-import uuid
+import streamlit as st
 
-import personal_accompanist.lilypond as lilypond
-import personal_accompanist.audio as audio
-import personal_accompanist.widgets as widgest
-import constants as cst
+from .practice import Practices
+from .lilypond import Lilypond
+from .audio import Audio
+from .gui import GUI
 
-reload(lilypond)
-reload(audio)
-reload(widgets)
-reload(cst)
+from practice_data import constants as cst
 
 
 class PersonalAccompanist:
 
     def __init__(self):
 
-        self.initial_run = True
-        self.basename = uuid.uuid4().hex
-        self.total_durations = []
-        self.key = 'C'
-        self.speeds = []
-        self.tempo = 60
-        self.exercise = 'One Octave'
-        self.loop = False
-        self.acc_instr = 'Grand Piano (well tempered)'
+        self.pitches = None
         self.reference_pitch = cst.REFERENCE_PITCH
-        self.audio_signal = None
+        self._total_duration = 0
+        self.practice = Practices()
+        self.lilypond = Lilypond(self.practice)
+        self.audio = Audio(self.practice)
+        self.set_pitches()
 
-        self.lilypond = lilypond.LilyPond()
-        self.audio = audio.Audio()
-        self.widgets = widgest.Widgets()
+        self.gui = GUI(practice=self.practice, lilypond=self.lilypond, audio=self.audio)
 
-    @property
-    def key_text(self):
-        if self.key[0].isupper():
-            return self.key + '-major'
+    def set_pitches(self):
+        r_p = self.reference_pitch
+        _pitches = {
+            "c-flat": r_p/4 * 9/8,
+            "c": r_p/4 * 6/5,
+            "c-sharp": r_p/4 * 5/4, "d-flat": r_p/4 * 5/4,
+            "d": r_p/4 * 4/3,
+            "d-sharp": r_p/4 * 45/32, "e-flat": r_p/4 * 45/32,
+            "e": r_p/4 * 3/2,
+            "f": r_p/4 * 8/5,
+            "f-sharp": r_p/4 * 5/3, "g-flat": r_p/4 * 5/3,
+            "g": r_p/4 * 9/5,
+            "g-sharp": r_p/4 * 15/8, "a-flat": r_p/4 * 15/8,
+            "a": r_p/2,
+            "a-sharp": r_p/2 * 16/15, "b-flat": r_p/2 * 16/15,
+            "b": r_p/2 * 9/8,
+        }
+
+        pitches = {}
+        for n in range(4):
+            add_on = ["", ""]
+            for _ in range(n):
+                add_on[0] += "'"
+                add_on[1] += ","
+            for name, ratio in _pitches.items():
+                pitches[name+add_on[0]] = ratio * 2 ** n
+                if n > 0:
+                    pitches[name + add_on[1]] = ratio / (2 ** n)
+
+        self.pitches = pitches
+
+    def set_chords(self):
+
+        p_a = st.session_state.p_a
+        scale_chords = [
+            [(2, -1), (4, -1), (0, 0)],
+            [(4, -1), (6, -1), (1, 0)],
+            [(4, -1), (0, 0), (2, 0)],
+            [(5, -1), (0, 0), (3, 0)],
+            [(0, 0), (2, 0), (4, 0)],
+            [(0, 0), (3, 0), (5, 0)],
+            [(1, 0), (4, 0), (6, 0)]
+        ]
+
+        triad_chords = [
+            [(2, -1), (4, -1), (0, 0)],
+            [(4, -1), (0, 0), (2, 0)],
+            [(0, 0), (2, 0), (4, 0)],
+            [(2, 0), (4, 0), (0, 1)],
+            [(4, 0), (0, 1), (2, 1)],
+            [(0, 1), (2, 1), (4, 1)],
+            [(2, 1), (4, 1), (0, 2)],
+        ]
+
+        kind = self.practice.music_key.split(' ')[-1]
+        if kind != 'major':
+            kind = 'melodic'
+
+        groups = []
+        if "Octave" in self.practice.exercise:
+            n_oct = 1
+            if 'Two' in self.practice.exercise:
+                n_oct = 2
+
+            up_chords = []
+            down_chords = []
+            for i_o in range(n_oct):
+                for i_c, chord in enumerate(scale_chords):
+                    up_chords.append([])
+                    down_chords = [[],] + down_chords
+                    for note, octave in chord:
+                        ratio = cst.PURE_RATIOS['up'][kind][note].split('/')
+                        ratio = int(ratio[0]) / int(ratio[1])
+                        rts = ratio * 2 ** (octave + i_o)
+                        up_chords[-1].append(rts)
+                        ratio = cst.PURE_RATIOS['down'][kind][note].split('/')
+                        ratio = int(ratio[0]) / int(ratio[1])
+                        rts = ratio * 2 ** (octave + i_o)
+                        down_chords[0].append(rts)
+            up_chords.append([r * 2 ** n_oct for r in up_chords[0]])
+            groups.append(up_chords + down_chords)
         else:
-            return self.key + '-minor'
+
+            for n in range(3, 8):
+                up_chords = []
+                down_chords = []
+                for i_c, chord in enumerate(triad_chords[:n]):
+                    up_chords.append([])
+                    down_chords = [[], ] + down_chords
+                    for note, octave in chord:
+                        ratio = cst.PURE_RATIOS['up'][kind][note].split('/')
+                        ratio = int(ratio[0]) / int(ratio[1])
+                        rts = ratio * 2 ** octave
+                        up_chords[-1].append(rts)
+                        ratio = cst.PURE_RATIOS['down'][kind][note].split('/')
+                        ratio = int(ratio[0]) / int(ratio[1])
+                        rts = ratio * 2 ** octave
+                        down_chords[0].append(rts)
+                down_chords.pop(0)  # up_chords.append([r * 2 ** (n-1) for r in up_chords[0]])
+                groups.append(up_chords + down_chords)
+        return groups
