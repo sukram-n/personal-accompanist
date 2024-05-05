@@ -3,7 +3,7 @@ import time
 
 import streamlit as st
 
-from personal_accompanist import PersonalAccompanist
+from p_a import PersonalAccompanist
 
 
 def init_session() -> PersonalAccompanist:
