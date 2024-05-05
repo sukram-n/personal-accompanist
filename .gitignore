@@ -161,3 +161,11 @@ cython_debug/
 /.assets/
 /.idea/
 /.tmp/
+/midi_personal_accompanist.midi
+/poetry.lock
+/svg_personal_accompanist.pdf
+/lilypond/midi_personal_accompanist.ly
+/lilypond/midi_personal_accompanist.midi
+/lilypond/svg_personal_accompanist.ly
+/lilypond/svg_personal_accompanist.pdf
+/lilypond/svg_personal_accompanist.svg
