@@ -10,7 +10,7 @@ def init_session() -> PersonalAccompanist:
 
     st.set_page_config(layout="wide")
 
-    for folder in ['./.tmp', './.assets']:
+    for folder in ['./.lilypond', './.assets']:
         if not os.path.exists(folder):
             os.mkdir(folder)
 
@@ -27,7 +27,7 @@ def clean_up(p_a) -> None:
 
     # delete everything that is older than 600 seconds in the `./.tmp` folder
     # and older the two hours in the `./.assets` folder
-    for folder, age in [('./.tmp', 60), ('./.assets', 7200)]:
+    for folder, age in [('./.lilypond', 600), ('./.assets', 7200)]:
         content = os.listdir(folder)
         # print(content)
         for entry in content:

@@ -24,7 +24,7 @@ TRANSLATIONS = {
 
 HEAD = f"""\\version "{cst.LILYPOND_VERSION}"
 \\language "english"
-\\include "./commons.ly"
+\\include "./../lilypond/commons.ly"
 
 """
 
@@ -209,8 +209,9 @@ class Staves:
 
 class Lilypond:
 
-    def __init__(self, practice: Practices):
+    def __init__(self, basename: str, practice: Practices):
 
+        self.basename = basename
         self.practice = practice
         self.durations = None
         self.footer: str = ""
@@ -259,7 +260,7 @@ class Lilypond:
 
     def _update_footer(self) -> None:
 
-        self.footer = '\n\\book {\n  \\bookOutputName "' + self.destination + '_personal_accompanist"\n'
+        self.footer = f'\n\\book {{\n  \\bookOutputName "{self.destination}_{self.basename}"\n'
         self.footer += '  \\header{ tagline = "" }\n  \\score {\n'
         if self.destination == 'svg':
             self.footer += '    << \\piano >>\n'
@@ -289,17 +290,17 @@ class Lilypond:
         return output
 
     def compile(self, destination='svg'):
+
         self.destination = destination
-        file_name = f'./lilypond/{destination}_personal_accompanist.ly'
+        file_name = f'./.lilypond/{destination}_{self.basename}.ly'
         with open(file_name, 'w') as file:
             file.write(self.source)
 
-        # compile lilypond source to midi
         dest = ''
         if destination == 'svg':
             dest = '--svg'
         subprocess.run(
-            ['lilypond', '--silent', '-dno-point-and-click', dest, '--output=./lilypond',
+            ['lilypond', '--silent', '-dno-point-and-click', dest, '--output=./.lilypond',
              file_name])
 
         # os.remove(file_name)
@@ -314,5 +315,5 @@ class Lilypond:
         # trim svg
         subprocess.run(
             ['inkscape',
-             f'./lilypond/svg_personal_accompanist.svg', f'--export-filename=./.assets/personal_accompanist.svg',
+             f'./.lilypond/svg_{self.basename}.svg', f'--export-filename=./.assets/{self.basename}.svg',
              '--export-area-drawing'])

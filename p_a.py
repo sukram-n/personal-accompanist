@@ -1,3 +1,5 @@
+import uuid
+
 import streamlit as st
 
 from p_a_practice import Practices
@@ -12,15 +14,17 @@ class PersonalAccompanist:
 
     def __init__(self):
 
+        self.basename = uuid.uuid4().hex
+
         self.pitches = None
         self.reference_pitch = cst.REFERENCE_PITCH
         self._total_duration = 0
         self.practice = Practices()
-        self.lilypond = Lilypond(self.practice)
-        self.audio = Audio(self.practice)
+        self.lilypond = Lilypond(self.basename, self.practice)
+        self.audio = Audio(self.basename, self.practice)
         self.set_pitches()
 
-        self.gui = GUI(practice=self.practice, lilypond=self.lilypond, audio=self.audio)
+        self.gui = GUI(self.basename, practice=self.practice, lilypond=self.lilypond, audio=self.audio)
 
     def set_pitches(self):
         r_p = self.reference_pitch

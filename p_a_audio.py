@@ -9,8 +9,9 @@ from practice_data import constants as cst
 
 class Audio:
 
-    def __init__(self, practice: Practices):
+    def __init__(self, basename: str,  practice: Practices):
 
+        self.basename = basename
         self.practice = practice
         self.signal: np.ndarray | None = None
         self.loop: bool = False
@@ -24,8 +25,8 @@ class Audio:
         if self.practice.acc_instr == cst.ACCOMPANY['GP']:
             p_a.lilypond.compile('midi')
             subprocess.run(
-                ['/usr/bin/timidity', '-Ow', './lilypond/midi_personal_accompanist.midi', '-o',
-                 '.assets/personal_accompanist.wav'])
+                ['/usr/bin/timidity', '-Ow', f'./.lilypond/midi_{self.basename}.midi', '-o',
+                 f'.assets/{self.basename}.wav'])
 
         elif self.practice.acc_instr == cst.ACCOMPANY['DR']:
             self.drone_root(fifth=False)
@@ -137,4 +138,4 @@ class Audio:
                 start_index += sample_size
 
         signal = signal / np.abs(signal).max()
-        self.signal = np.int16(signal * (2 ** 9 - 1))
+        self.signal = np.int16(signal * (2 **11 - 1))

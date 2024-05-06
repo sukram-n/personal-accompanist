@@ -8,8 +8,6 @@ from p_a_practice import Practices, EXERCISES, SPEEDS
 from p_a_audio import Audio
 from p_a_lilypond import Lilypond
 
-import p_a
-
 
 def format_func(s: str) -> str:
     return s[1:]
@@ -46,8 +44,11 @@ def make_sidebar():
 class GUI:
 
     def __init__(self,
+                 basename: str,
                  practice: Practices | None = None,
                  lilypond: Lilypond|None=None, audio: Audio = None):
+
+        self.basename = basename
         self.practice = practice
         self.lilypond = lilypond
         self.audio = audio
@@ -55,23 +56,23 @@ class GUI:
 
     def show_gui(self):
 
-        p_a: p_a.PersonalAccompanist = st.session_state.p_a
+        p_a = st.session_state.p_a
 
         st.write('## Personal Accompanist')
 
         make_sidebar()
 
         # check for file existance before showing them
-        if os.path.exists('.assets/personal_accompanist.svg'):
+        if os.path.exists(f'.assets/{self.basename}.svg'):
             # the sheet music
-            st.image(f'.assets/personal_accompanist.svg', use_column_width='always')
+            st.image(f'.assets/{self.basename}.svg', use_column_width='always')
 
-        if os.path.exists('.assets/personal_accompanist.wav'):
+        if os.path.exists(f'.assets/{self.basename}.wav'):
 
             cols = st.columns([0.9, 0.1])
             # the audio file
             if st.session_state.p_a.practice.acc_instr == cst.ACCOMPANY['GP']:
-                cols[0].audio('.assets/personal_accompanist.wav', loop=p_a.practice.loop)
+                cols[0].audio(f'.assets/{self.basename}.wav', loop=p_a.practice.loop)
             else:
                 cols[0].audio(self.audio.signal, loop=p_a.practice.loop, sample_rate=cst.SAMPLE_RATE)
             cols[1].checkbox('Loop', key='loop')
