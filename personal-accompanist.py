@@ -19,7 +19,7 @@ def init_session() -> PersonalAccompanist:
     return st.session_state.p_a
 
 
-def clean_up(p_a) -> None:
+def clean_up() -> None:
 
     """
     remove old files
