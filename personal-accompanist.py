@@ -60,7 +60,7 @@ def main():
 
     p_a.gui.show_gui()
 
-    clean_up(st.session_state.p_a)
+    clean_up()
     if rerun:
         st.rerun()
 
