@@ -1,8 +1,5 @@
-import streamlit as st
-
 LILYPOND_VERSION = "2.24.1"
 
-REFERENCE_PITCH = 443.0
 SAMPLE_RATE = 48000
 
 # see https://en.wikipedia.org/wiki/Just_intonation
@@ -63,13 +60,7 @@ PURE_RATIOS = {
 }
 
 ACCOMPANY = {
-    'GP': "Grand Piano (well tempered)",
+    'GP': "Grand Piano (non pure)",
     'DR': "Drone Root (incl. harmonics)",
     'DF': "Drone Fifth (incl. harmonics)",
     'PC': "Pure Chords"}
-
-
-if "reference_pitch" in st.session_state:
-    reference_pitch = st.session_state.reference_pitch
-else:
-    reference_pitch = REFERENCE_PITCH

@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from practice_data import constants as cst
+import p_a_constants as cst
 
 from p_a_practice import SPEEDS, Practices
 
@@ -132,8 +132,12 @@ class Staves:
                 clef = '-'
             if ton != "R":
                 ff = ""
-                for f in finger:
-                    ff += TRANSLATIONS[f]
+                if self.practice.show_fingerings:
+                    for f in finger:
+                        ff += TRANSLATIONS[f]
+                else:
+                    string = '-'
+
                 text = f"{TRANSLATIONS[clef]}{ton}{note_value}{ff}{TRANSLATIONS[string]}"
                 staves.append(text, f"r{note_value}")
                 durations[-1].append(48 // n_o_events)
@@ -149,7 +153,7 @@ class Staves:
         if len(durations[-1]) == 0:
             durations.pop(-1)
 
-        if self.practice.slurs:
+        if self.practice.show_slurs:
             staves.piano.add_slurs(n_o_events)
 
         if n_o_events == 12:

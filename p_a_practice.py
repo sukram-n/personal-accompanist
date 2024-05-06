@@ -1,5 +1,6 @@
 import streamlit as st
-from practice_data import practice_data, constants as cst
+from practice_data import practice_data
+import p_a_constants as cst
 
 EXERCISES = ['One Octave', 'Two Octaves', 'Triads']
 
@@ -24,7 +25,9 @@ class Practices:
         self.has_changed: bool = True
         self.acc_instr = cst.ACCOMPANY['GP']
         self.loop = False
-        self.slurs = True
+        self.show_slurs = True
+        self.show_fingerings = True
+        self.reference_frequency = 443
 
     def get_data(self):
 
@@ -49,8 +52,16 @@ class Practices:
         if 'loop' in ss:
             self.loop = ss.loop
 
-        if ss.slurs != self.slurs:
-            self.slurs = ss.slurs
+        if ss.reference_frequency != self.reference_frequency:
+            self.reference_frequency = ss.reference_frequency
+            self.has_changed = True
+
+        if ss.fingerings != self.show_fingerings:
+            self.show_fingerings = ss.fingerings
+            self.has_changed = True
+
+        if ss.slurs != self.show_slurs:
+            self.show_slurs = ss.slurs
             self.has_changed = True
 
         if ss.exercise != self.exercise:

@@ -2,7 +2,8 @@ import os
 
 import streamlit as st
 
-from practice_data import practice_data, constants as cst
+from practice_data import practice_data
+import p_a_constants as cst
 
 from p_a_practice import Practices, EXERCISES, SPEEDS
 from p_a_audio import Audio
@@ -32,13 +33,22 @@ def make_sidebar():
 
     settings.slider('Tempo (b.p.m.)', 30, 240, step=5, key='tempo', value=60)
 
-    cols = settings.columns([0.7, 0.3])
-    cols[0].multiselect('Value of Notes', SPEEDS, format_func=format_func, key='speeds',
-                        default='31/4 notes')
-    cols[1].checkbox('Slurs', key='slurs')
+    settings.multiselect('Value of Notes', SPEEDS, format_func=format_func, key='speeds',
+                         default='31/4 notes')
 
     acc_instr = [_e for _k, _e in cst.ACCOMPANY.items()]
     settings.selectbox('Accompanying Instrument', acc_instr, key='acc_instr', index=0)
+
+    disabled = False
+    if state.p_a.practice.acc_instr == cst.ACCOMPANY['GP']:
+        disabled = True
+
+    settings.slider('Reference a at (Hz)',
+                    438.0, 448.0, step=0.5, value=443.0, key='reference_frequency', disabled=disabled)
+
+    cols = settings.columns(2)
+    cols[0].checkbox('Slurs', key='slurs')
+    cols[1].checkbox('Fingerings', key='fingerings')
 
 
 class GUI:
@@ -46,7 +56,7 @@ class GUI:
     def __init__(self,
                  basename: str,
                  practice: Practices | None = None,
-                 lilypond: Lilypond|None=None, audio: Audio = None):
+                 lilypond: Lilypond | None = None, audio: Audio = None):
 
         self.basename = basename
         self.practice = practice

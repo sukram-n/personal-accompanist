@@ -4,7 +4,7 @@ import numpy as np
 
 import streamlit as st
 from p_a_practice import Practices
-from practice_data import constants as cst
+import p_a_constants as cst
 
 
 class Audio:

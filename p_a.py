@@ -1,13 +1,11 @@
 import uuid
 
-import streamlit as st
-
 from p_a_practice import Practices
 from p_a_lilypond import Lilypond
 from p_a_audio import Audio
 from p_a_gui import GUI
 
-from practice_data import constants as cst
+import p_a_constants as cst
 
 
 class PersonalAccompanist:
@@ -17,7 +15,6 @@ class PersonalAccompanist:
         self.basename = uuid.uuid4().hex
 
         self.pitches = None
-        self.reference_pitch = cst.REFERENCE_PITCH
         self._total_duration = 0
         self.practice = Practices()
         self.lilypond = Lilypond(self.basename, self.practice)
@@ -27,21 +24,21 @@ class PersonalAccompanist:
         self.gui = GUI(self.basename, practice=self.practice, lilypond=self.lilypond, audio=self.audio)
 
     def set_pitches(self):
-        r_p = self.reference_pitch
+        r_f = self.practice.reference_frequency
         _pitches = {
-            "c-flat": r_p/4 * 9/8,
-            "c": r_p/4 * 6/5,
-            "c-sharp": r_p/4 * 5/4, "d-flat": r_p/4 * 5/4,
-            "d": r_p/4 * 4/3,
-            "d-sharp": r_p/4 * 45/32, "e-flat": r_p/4 * 45/32,
-            "e": r_p/4 * 3/2,
-            "f": r_p/4 * 8/5,
-            "f-sharp": r_p/4 * 5/3, "g-flat": r_p/4 * 5/3,
-            "g": r_p/4 * 9/5,
-            "g-sharp": r_p/4 * 15/8, "a-flat": r_p/4 * 15/8,
-            "a": r_p/2,
-            "a-sharp": r_p/2 * 16/15, "b-flat": r_p/2 * 16/15,
-            "b": r_p/2 * 9/8,
+            "c-flat": r_f / 4 * 9 / 8,
+            "c": r_f / 4 * 6 / 5,
+            "c-sharp": r_f / 4 * 5 / 4, "d-flat": r_f / 4 * 5 / 4,
+            "d": r_f / 4 * 4 / 3,
+            "d-sharp": r_f / 4 * 45 / 32, "e-flat": r_f / 4 * 45 / 32,
+            "e": r_f / 4 * 3 / 2,
+            "f": r_f / 4 * 8 / 5,
+            "f-sharp": r_f / 4 * 5 / 3, "g-flat": r_f / 4 * 5 / 3,
+            "g": r_f / 4 * 9 / 5,
+            "g-sharp": r_f / 4 * 15 / 8, "a-flat": r_f / 4 * 15 / 8,
+            "a": r_f / 2,
+            "a-sharp": r_f / 2 * 16 / 15, "b-flat": r_f / 2 * 16 / 15,
+            "b": r_f / 2 * 9 / 8,
         }
 
         pitches = {}
@@ -51,7 +48,7 @@ class PersonalAccompanist:
                 add_on[0] += "'"
                 add_on[1] += ","
             for name, ratio in _pitches.items():
-                pitches[name+add_on[0]] = ratio * 2 ** n
+                pitches[name + add_on[0]] = ratio * 2 ** n
                 if n > 0:
                     pitches[name + add_on[1]] = ratio / (2 ** n)
 
@@ -59,7 +56,6 @@ class PersonalAccompanist:
 
     def set_chords(self):
 
-        p_a = st.session_state.p_a
         scale_chords = [
             [(2, -1), (4, -1), (0, 0)],
             [(4, -1), (6, -1), (1, 0)],
@@ -95,7 +91,7 @@ class PersonalAccompanist:
             for i_o in range(n_oct):
                 for i_c, chord in enumerate(scale_chords):
                     up_chords.append([])
-                    down_chords = [[],] + down_chords
+                    down_chords = [[], ] + down_chords
                     for note, octave in chord:
                         ratio = cst.PURE_RATIOS['up'][kind][note].split('/')
                         ratio = int(ratio[0]) / int(ratio[1])
