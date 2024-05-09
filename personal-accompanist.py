@@ -54,7 +54,7 @@ def main():
 
         p_a = st.session_state.p_a
 
-        p_a.practice.update_variables()
+        p_a.exercises.update_variables()
         p_a.lilypond.prepare()
         p_a.audio.prepare()
 

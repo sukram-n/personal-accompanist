@@ -1,8 +1,8 @@
 import streamlit as st
-from practice_data import practice_data
+from scales_and_triads_data import data
 import p_a_constants as cst
 
-EXERCISES = ['One Octave', 'Two Octaves', 'Triads']
+EXERCISE_TYPE = ['One Octave', 'Two Octaves', 'Triads']
 
 SPEEDS = {
     '11/1 notes': (1, 1),
@@ -14,7 +14,7 @@ SPEEDS = {
 }
 
 
-class Practices:
+class Exercises:
 
     def __init__(self):
 
@@ -33,7 +33,7 @@ class Practices:
 
         # prepare an intermediate data set that is easier to work on
 
-        exercise = practice_data[self.music_key][self.exercise]
+        exercise = data[self.music_key][self.exercise]
         data = {}
         for desig in exercise:
             data[desig] = exercise[desig].split()

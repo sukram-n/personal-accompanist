@@ -3,16 +3,16 @@ import subprocess
 import numpy as np
 
 import streamlit as st
-from p_a_practice import Practices
+from p_a_scales_and_triads import Exercises
 import p_a_constants as cst
 
 
 class Audio:
 
-    def __init__(self, basename: str,  practice: Practices):
+    def __init__(self, basename: str, exercise: Exercises):
 
         self.basename = basename
-        self.practice = practice
+        self.exercise = exercise
         self.signal: np.ndarray | None = None
         self.loop: bool = False
         self.acc_instr = cst.ACCOMPANY['GP']
@@ -22,17 +22,17 @@ class Audio:
 
         p_a = st.session_state.p_a
 
-        if self.practice.acc_instr == cst.ACCOMPANY['GP']:
+        if self.exercise.acc_instr == cst.ACCOMPANY['GP']:
             p_a.lilypond.compile('midi')
             subprocess.run(
                 ['/usr/bin/timidity', '-Ow', f'./.lilypond/midi_{self.basename}.midi', '-o',
                  f'.assets/{self.basename}.wav'])
 
-        elif self.practice.acc_instr == cst.ACCOMPANY['DR']:
+        elif self.exercise.acc_instr == cst.ACCOMPANY['DR']:
             self.drone_root(fifth=False)
-        elif self.practice.acc_instr == cst.ACCOMPANY['DF']:
+        elif self.exercise.acc_instr == cst.ACCOMPANY['DF']:
             self.drone_root(fifth=True)
-        elif self.practice.acc_instr == cst.ACCOMPANY['PC']:
+        elif self.exercise.acc_instr == cst.ACCOMPANY['PC']:
             self.pure_chords()
 
         self.is_valid = True
@@ -67,7 +67,7 @@ class Audio:
         n_q = p_a.lilypond.total_duration // 48
         n_beats = n_q * 4
 
-        signal = np.zeros(n_beats * 60 * cst.SAMPLE_RATE // self.practice.tempo)
+        signal = np.zeros(n_beats * 60 * cst.SAMPLE_RATE // self.exercise.tempo)
 
         size = signal.size // n_beats
         ping_signal = self.ping(size)
@@ -75,7 +75,7 @@ class Audio:
         for i in range(4):
             signal[i * size:(i + 1) * size] = ping_signal
 
-        root_pitch = self.practice.music_key.split(' ')[0]
+        root_pitch = self.exercise.music_key.split(' ')[0]
         root_frequency = p_a.pitches[root_pitch + ',,']
         while root_frequency < 100.0:
             root_frequency *= 2
@@ -109,7 +109,7 @@ class Audio:
         p_a = st.session_state.p_a
         signal, n_beats, root_frequency, size = self.n_beats_root_pitch()
         # number of data points per beat
-        dp_per_beat = int(60.0 / self.practice.tempo * cst.SAMPLE_RATE + 0.5)
+        dp_per_beat = int(60.0 / self.exercise.tempo * cst.SAMPLE_RATE + 0.5)
         self.signal = signal
 
         previous_duration = 0

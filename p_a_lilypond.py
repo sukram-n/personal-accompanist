@@ -3,7 +3,7 @@ import subprocess
 
 import p_a_constants as cst
 
-from p_a_practice import SPEEDS, Practices
+from p_a_scales_and_triads import SPEEDS, Exercises
 
 TRANSLATIONS = {
     "0": "^\\Nf",
@@ -94,9 +94,9 @@ class Staff:
 
 class Staves:
 
-    def __init__(self, practice):
+    def __init__(self, exercise):
 
-        self.practice = practice
+        self.exercise = exercise
         self.piano = Staff()
         self.metronome = Staff()
 
@@ -123,7 +123,7 @@ class Staves:
         # piano is for the music and metronome records events for indicating the speed at the beginning,
         # in general four beats on a woodblock
 
-        staves = Staves(self.practice)
+        staves = Staves(self.exercise)
         for ton, finger, clef, string in zip(
                 data['pitches'], data['fingers'], data['clefs'], data['strings']):
             if current_clef != clef and clef != '-':
@@ -132,7 +132,7 @@ class Staves:
                 clef = '-'
             if ton != "R":
                 ff = ""
-                if self.practice.show_fingerings:
+                if self.exercise.show_fingerings:
                     for f in finger:
                         ff += TRANSLATIONS[f]
                 else:
@@ -153,7 +153,7 @@ class Staves:
         if len(durations[-1]) == 0:
             durations.pop(-1)
 
-        if self.practice.show_slurs:
+        if self.exercise.show_slurs:
             staves.piano.add_slurs(n_o_events)
 
         if n_o_events == 12:
@@ -171,31 +171,31 @@ class Staves:
         self.piano.source = 'piano = \\new Staff \\with {midiInstrument = "acoustic grand" } {\n'
         self.metronome.source = 'metronome = \\new Staff \\with {midiInstrument = "woodblock" } {\n'
 
-        text = self.practice.music_key.replace(" ", " \\").lower()
+        text = self.exercise.music_key.replace(" ", " \\").lower()
         self.piano.concatenate('  \\accidentalStyle modern-cautionary\n'
                                '  \\tupletDown\n'
                                '  \\override TextScript.staff-padding = # 3\n')
 
         self.piano.concatenate(f'  \\key {text}\n'
                                f'  {TRANSLATIONS[current_clef]}'
-                               f'  \\tempo 4={self.practice.tempo} \n'
+                               f'  \\tempo 4={self.exercise.tempo} \n'
                                'r1')
 
         self.metronome.concatenate("c4 c4 c4 c4 \n")
         durations = [[12, 12, 12, 12]]
 
         # ---------------------------------------------------------------------
-        data = self.practice.get_data()
+        data = self.exercise.get_data()
 
         bar = ''
-        for speed in sorted(self.practice.speeds):
+        for speed in sorted(self.exercise.speeds):
             staves, _durations = self.tones_list(data, speed, current_clef)
             durations += _durations
             self.concatenate(bar, bar)
             self.concatenate(staves.piano.source, staves.metronome.source)
             bar = ' \\bar  "||"\n'
 
-        if self.practice.loop:
+        if self.exercise.loop:
             bar = " \\set Score.repeatCommands = #'(end-repeat) \n"
         else:
             bar = ' \\bar  "|."\n'
@@ -213,14 +213,14 @@ class Staves:
 
 class Lilypond:
 
-    def __init__(self, basename: str, practice: Practices):
+    def __init__(self, basename: str, exercise: Exercises):
 
         self.basename = basename
-        self.practice = practice
+        self.exercise = exercise
         self.durations = None
         self.footer: str = ""
 
-        self.staves = Staves(self.practice)
+        self.staves = Staves(self.exercise)
 
         self._svg_source: str = ''
         self._mid_source: str = ''

@@ -1,6 +1,6 @@
 import uuid
 
-from p_a_practice import Practices
+from p_a_scales_and_triads import Exercises
 from p_a_lilypond import Lilypond
 from p_a_audio import Audio
 from p_a_gui import GUI
@@ -16,15 +16,15 @@ class PersonalAccompanist:
 
         self.pitches = None
         self._total_duration = 0
-        self.practice = Practices()
-        self.lilypond = Lilypond(self.basename, self.practice)
-        self.audio = Audio(self.basename, self.practice)
+        self.exercises = Exercises()
+        self.lilypond = Lilypond(self.basename, self.exercises)
+        self.audio = Audio(self.basename, self.exercises)
         self.set_pitches()
 
-        self.gui = GUI(self.basename, practice=self.practice, lilypond=self.lilypond, audio=self.audio)
+        self.gui = GUI(self.basename, practice=self.exercises, lilypond=self.lilypond, audio=self.audio)
 
     def set_pitches(self):
-        r_f = self.practice.reference_frequency
+        r_f = self.exercises.reference_frequency
         _pitches = {
             "c-flat": r_f / 4 * 9 / 8,
             "c": r_f / 4 * 6 / 5,
@@ -76,14 +76,14 @@ class PersonalAccompanist:
             [(2, 1), (4, 1), (0, 2)],
         ]
 
-        kind = self.practice.music_key.split(' ')[-1]
+        kind = self.exercises.music_key.split(' ')[-1]
         if kind != 'major':
             kind = 'melodic'
 
         groups = []
-        if "Octave" in self.practice.exercise:
+        if "Octave" in self.exercises.exercise:
             n_oct = 1
-            if 'Two' in self.practice.exercise:
+            if 'Two' in self.exercises.exercise:
                 n_oct = 2
 
             up_chords = []

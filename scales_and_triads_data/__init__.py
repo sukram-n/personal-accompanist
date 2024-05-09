@@ -26,7 +26,7 @@ from .f_major import trainings as f_major
 from .d_minor import trainings as d_minor
 
 
-practice_data = {
+data = {
     'c major': c_major,
     'a minor': a_minor,
     'g major': g_major,
