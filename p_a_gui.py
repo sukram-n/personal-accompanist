@@ -15,7 +15,6 @@ def format_func(s: str) -> str:
 
 
 def scales_and_triads_tab(sat):
-
     state = st.session_state
 
     if 'musickeys' not in state:
@@ -32,7 +31,7 @@ def scales_and_triads_tab(sat):
     sat.slider('Tempo (b.p.m.)', 30, 240, step=5, key='tempo', value=60)
 
     sat.multiselect('Value of Notes', SPEEDS, format_func=format_func, key='speeds',
-                         default='31/4 notes')
+                    default='31/4 notes')
 
     acc_instr = [_e for _k, _e in cst.ACCOMPANY.items()]
     sat.selectbox('Accompanying Instrument', acc_instr, key='acc_instr', index=0)
@@ -42,14 +41,14 @@ def scales_and_triads_tab(sat):
         disabled = True
 
     sat.slider('Reference a at (Hz)',
-                    438.0, 448.0, step=0.5, value=443.0, key='reference_frequency', disabled=disabled)
+               438.0, 448.0, step=0.5, value=443.0, key='reference_frequency', disabled=disabled)
 
     cols = sat.columns(2)
     cols[0].checkbox('Slurs', key='slurs')
     cols[1].checkbox('Fingerings', key='fingerings')
 
-def make_sidebar():
 
+def make_sidebar():
     sidebar = st.sidebar
     scales_and_trials, about = sidebar.tabs(['Scales and Triads', 'About'])
 
